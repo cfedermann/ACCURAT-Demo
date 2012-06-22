@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <script language="JavaScript">
+  <!--
+function clear_form()
+{
+  $('form textarea').val('');
+}
+  //-->
+  </script>
+
+  <div class="page-header">
+    <h1>ACCURAT Translation Services <small>Choose a language pair and enter some text...</small></h1>
+  </div>
+  <form class="form-horizontal" method="post" action="{% url accurat.views.translate %}">
+  {% csrf_token %}
+
+  <fieldset class="form-horizontal">
+    {% for field in form %}
+    <div class="control-group">
+      <label class="control-label" for="{{field.auto_id}}">{{field.label}}</label>
+      <div class="controls">{{field}}{% if field.help_text %}<p class="help-block">{{field.help_text}}</p>{% endif %}</div>
+    </div>
+    {% endfor %}
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Translate</button>
+      <button type="button" class="btn btn-secondary" onclick="javascript:clear_form();">Clear</button>
+    </div>
+
+  </fieldset>
+  
+  </form>
+
+  {% if result %}
+  <fieldset>
+    <legend>Translation Result</legend>
+    {{ result }}
+  </fieldset>
+  {% endif %}
+
+{% endblock %}

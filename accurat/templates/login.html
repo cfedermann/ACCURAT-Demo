@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+  {% if form.errors %}
+  <div class="alert alert-error">
+    <a class="close" onclick="javascript:$(this).parent().fadeOut('slow');">×</a>
+    <strong>Warning!</strong> Your username and password did not match. Please try again.
+  </div>
+  {% endif %}
+
+  <div class="page-header">
+    <h1>User Authentication <small>Your username and password, please...</small></h1>
+  </div>
+  <form class="form-horizontal" method="post" action="{% url accurat.views.login %}">
+  {% csrf_token %}
+
+  <fieldset>
+
+    <div class="control-group">
+      <label class="control-label" for="id_username">Username</label>
+      <div class="controls">
+        <div class="input-prepend">
+          <span class="add-on">required</span>
+          <input class="span2" name="username" id="id_username" type="text" size="30" value="{{username}}" />
+        </div>
+        <p class="help-block">Please enter your username</p>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <label class="control-label" for="id_password">Password</label>
+      <div class="controls">
+        <div class="input-prepend">
+          <span class="add-on">required</span>
+          <input class="span2" name="password" id="id_password" type="password" size="30" value="{{username}}" />
+        </div>
+        <p class="help-block">And also provide your password</p>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Login</button>
+    </div>
+
+  </fieldset>
+  
+  <input type="hidden" name="next" value="{{ next }}" />
+  
+  </form>
+{% endblock %}

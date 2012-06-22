@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if message %}
+  <div class="alert-message error">
+    <p><strong>Please note:</strong> {{message}}</p>
+  </div>
+{% endif %}
+
+  <!-- Main hero unit for a primary marketing message or call to action -->
+  <div class="hero-unit">
+    <h1>ACCURAT Translation Services</h1>
+    <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam.</p>
+
+    <p><a href="{% url accurat.views.translate %}" class="btn btn-primary btn-large">Access translation dashboard &raquo;</a></p>
+  </div>
+
+{% endblock %}
