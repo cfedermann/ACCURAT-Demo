@@ -36,14 +36,11 @@
 {% block javascript %}
   <script language="JavaScript">
   <!--
+var SELECTED = "{{selected|safe}}".split(",");
+var JSON_DATA = '{{json_data|safe}}';
+var PARSED_DATA = $.parseJSON(JSON_DATA);
+
 $(document).ready(function() {
-  var JSON_DUMMY = '{"foo": {"jane": ["a"], "john": ["a", "b"]}, "bar": {"slayer": ["a", "c"]}}';
-  var DATA_DUMMY = $.parseJSON(JSON_DUMMY);
-
-//  for (var propertyName in DATA_DUMMY) {
-//    alert(propertyName);
-//  }
-
   var source_language = $('#id_source_language');
   source_language.change(function() {
     update_target_languages();
@@ -54,25 +51,88 @@ $(document).ready(function() {
     update_system_type();
   });
 
-
-  source_language.append('<option value="">---</option>');
-  source_language.append('<option value="foo">foo</option>');
-  source_language.append('<option value="bar">bar</option>');
+  update_source_languages(SELECTED[0]);
 });
 
-function update_target_languages() {
+function set_focus() {
+  var source_language = $('#id_source_language');
+  if (source_language.val() == '') {
+    source_language.focus();
+    return;
+  }
+
+  var target_language = $('#id_target_language');
+  if (target_language.val() == '') {
+    target_language.focus();
+    return;
+  }
+
+  var system_type = $('#id_system_type');
+  if (system_type.val() == '') {
+    system_type.focus();
+    return;
+  }
+
+  $('#id_source_text').focus();
+}
+
+function create_option(value, selected) {
+  var option = '<option value="'+value+'"';
+  if (value == selected) {
+    option += ' selected="selected"';
+  }
+  option += '>'+value+'</option>';
+  return option;
+}
+
+function update_source_languages(selected) {
+  var source_language = $('#id_source_language');
+  source_language.empty();
+
+  source_language.append('<option value="">---</option>');
+  for (var source in PARSED_DATA) {
+    source_language.append(create_option(source, selected));
+  }
+
+  update_target_languages(SELECTED[1]);
+  set_focus();
+}
+
+function update_target_languages(selected) {
   var source_language = $('#id_source_language');
   var target_language = $('#id_target_language');
   target_language.empty();
- 
-  target_language.append('<option value="">---</option>'); target_language.append('<option>'+source_language.val().toUpperCase()+'</option>');
+
+  var _source = source_language.val();
+
+  if ((_source != '---') && (_source != '')) {
+    target_language.append('<option value="">---</option>');
+    for (var target in PARSED_DATA[_source]) {
+      target_language.append(create_option(target, selected));
+    }
+  }
+
+  update_system_type(SELECTED[2]);
+  set_focus();
 }
 
-function update_system_type() {
+function update_system_type(selected) {
+  var source_language = $('#id_source_language');
   var target_language = $('#id_target_language');
   var system_type = $('#id_system_type');
   system_type.empty();
-  alert('update_system_type()');
+
+  var _source = source_language.val();
+  var _target = target_language.val();
+
+  if ((_source != '---') && (_target != '---') && (_source != '') && (_target != '')) {
+    system_type.append('<option value="">---</option>');
+    for (var _type in PARSED_DATA[source_language.val()][target_language.val()]) {
+      system_type.append(create_option(PARSED_DATA[source_language.val()][target_language.val()][_type], selected));
+    }
+  }
+
+  set_focus();
 }
 
 function clear_form()
