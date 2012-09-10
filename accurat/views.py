@@ -18,7 +18,7 @@ def home(request):
     return render_to_response("home.html", dictionary,
       context_instance=RequestContext(request))
 
-@login_required
+# @login_required
 def translate(request):
     if request.method == "POST":
         form = TranslateForm(request.POST)

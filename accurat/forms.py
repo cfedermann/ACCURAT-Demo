@@ -10,7 +10,9 @@ LANGUAGE_PAIRS = (
 )
 
 class TranslateForm(forms.Form):
-    language_pair = forms.ChoiceField(choices=LANGUAGE_PAIRS)
+    source_language = forms.ChoiceField()
+    target_language = forms.ChoiceField()
+    system_type = forms.ChoiceField()
     source_text = forms.CharField(max_length=1000,
       help_text="You can enter up to 1,000 characters...",
       widget=forms.Textarea(attrs={'class': 'span8', 'maxlength': 1000}))

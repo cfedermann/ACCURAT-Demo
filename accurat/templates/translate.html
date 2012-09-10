@@ -1,15 +1,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <script language="JavaScript">
-  <!--
-function clear_form()
-{
-  $('form textarea').val('');
-}
-  //-->
-  </script>
-
   <div class="page-header">
     <h1>ACCURAT Translation Services <small>Choose a language pair and enter some text...</small></h1>
   </div>
@@ -40,4 +31,54 @@ function clear_form()
   </fieldset>
   {% endif %}
 
+{% endblock %}
+
+{% block javascript %}
+  <script language="JavaScript">
+  <!--
+$(document).ready(function() {
+  var JSON_DUMMY = '{"foo": {"jane": ["a"], "john": ["a", "b"]}, "bar": {"slayer": ["a", "c"]}}';
+  var DATA_DUMMY = $.parseJSON(JSON_DUMMY);
+
+//  for (var propertyName in DATA_DUMMY) {
+//    alert(propertyName);
+//  }
+
+  var source_language = $('#id_source_language');
+  source_language.change(function() {
+    update_target_languages();
+  });
+
+  var target_language = $('#id_target_language');
+  target_language.change(function() {
+    update_system_type();
+  });
+
+
+  source_language.append('<option value="">---</option>');
+  source_language.append('<option value="foo">foo</option>');
+  source_language.append('<option value="bar">bar</option>');
+});
+
+function update_target_languages() {
+  var source_language = $('#id_source_language');
+  var target_language = $('#id_target_language');
+  target_language.empty();
+ 
+  target_language.append('<option value="">---</option>'); target_language.append('<option>'+source_language.val().toUpperCase()+'</option>');
+}
+
+function update_system_type() {
+  var target_language = $('#id_target_language');
+  var system_type = $('#id_system_type');
+  system_type.empty();
+  alert('update_system_type()');
+}
+
+function clear_form()
+{
+  $('form textarea').val('');
+}
+  //-->
+  </script>
 {% endblock %}
