@@ -8,7 +8,7 @@ from django.contrib.auth.views import login as _login, logout as _logout
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 
-from accurat.forms import TranslateForm, LANGUAGE_PAIRS
+from accurat.forms import TranslateForm, LANGUAGE_PAIRS, LANGUAGE_CODES
 from accurat.settings import COMMIT_TAG
 
 def _compile_json_data(language_pairs):
@@ -30,6 +30,58 @@ def _compile_json_data(language_pairs):
         json_data[_source][_target].append(_type)
     
     return json_data
+
+def _translate(_source, _target, _type, _text):
+    from tempfile import mkstemp
+    from os import unlink, close, write
+    
+    source_file = mkstemp(suffix=".source", dir="/tmp")
+    if not _text.endswith('\n'):
+        _text += '\n'
+    write(source_file[0], _text)
+    close(source_file[0])
+    
+    target_file = source_file[1].strip('.source') + '.target'
+
+    source_language = LANGUAGE_CODES[_source]
+    target_language = LANGUAGE_CODES[_target]
+    system_type = _type.lower()
+
+    # This is a special instance of the Moses worker, with pre-defined
+    # knowledge about the ACCURAT Moses configurations.  We use this
+    # approach to ensure that only one Moses process at a time can be
+    # started; by doing so, we can avoid memory issues.
+    MOSES_CMD = '/share/accurat/run/wmt10/bin/moses-irstlm/mosesdecoder' \
+      '/mosesdecoder/moses-cmd/src/moses'
+    
+    MOSES_CONFIG = '/share/accurat/mtserver/accurat/{0}-{1}/' \
+      '{2}.moses.ini.bin'.format(source_language, target_language,
+      system_type)
+    
+    # Then, we invoke the Moses command reading from the source file
+    # and writing to a target file, also inside /tmp.  This blocks until
+    # the Moses process finishes.
+    shell_cmd = "{0} -f {1} < {2} > {3}".format(
+      MOSES_CMD, MOSES_CONFIG, source_file[1], target_file)
+
+    print shell_cmd
+    return
+
+#    process = Popen(shell_cmd, shell=True)
+#    process.wait()
+
+    # Wait for some time to ensure file I/O is completed.
+#    sleep(2)
+
+    # We can now load the translation from the target file.
+    with open(target_file, 'r') as target:
+        target_text = target.read()
+
+#    unlink(source_file[1])
+#    unlink(target_file)
+
+    return unicode(target_text, 'utf-8')
+    
 
 def home(request):
     dictionary = {
@@ -56,14 +108,18 @@ def translate(request):
             _source = form.cleaned_data['source_language']
             _target = form.cleaned_data['target_language']
             _type = form.cleaned_data['system_type']
+            _text = form.cleaned_data['source_text']
+            
+            _translate(_source, _target, _type, _text)
+            
+            print _text.encode('utf-8')
+            
             selected = '{},{},{}'.format(_source, _target, _type)
             result = "TRANSLATION_{}_WOULD_BE_AVAILABLE_HERE".format(selected)
 
     else:
         form = TranslateForm()
         result = None
-    
-    print "selected: {}".format(selected)
     
     dictionary = {
       'title': 'ACCURAT Translation Services',

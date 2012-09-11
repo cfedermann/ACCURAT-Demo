@@ -4,6 +4,18 @@ Project: ACCURAT Demo Translation Services
 """
 from django import forms
 
+LANGUAGE_CODES = {
+  'German': 'de',
+  'English': 'en',
+  'Romanian': 'ro',
+  'Greek': 'el',
+  'Estonian': 'et',
+  'Croatian': 'hr',
+  'Lithuanian': 'lt',
+  'Latvian': 'lv',
+  'Slovenian': 'sl',
+}
+
 LANGUAGE_PAIRS = (
   'German,English,Baseline',
   'German,English,Improved',
