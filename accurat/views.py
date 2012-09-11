@@ -65,15 +65,14 @@ def _translate(_source, _target, _type, _text):
     shell_cmd = "{0} -f {1} < {2} > {3}".format(
       MOSES_CMD, MOSES_CONFIG, source_file[1], target_file)
 
-    print shell_cmd
-    return
-
     process = Popen(shell_cmd, shell=True)
     process.wait()
 
     # We can now load the translation from the target file.
     with open(target_file, 'r') as target:
         target_text = target.read()
+    
+    print target_text
 
     unlink(source_file[1])
     unlink(target_file)
@@ -108,6 +107,7 @@ def translate(request):
             _type = form.cleaned_data['system_type']
             _text = form.cleaned_data['source_text']
             
+            selected = '{0},{1},{2}'.format(_source, _target, _type)
             result = _translate(_source, _target, _type, _text)
 
     else:
