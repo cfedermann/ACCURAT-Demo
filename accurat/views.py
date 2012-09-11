@@ -3,6 +3,7 @@ Project: ACCURAT Demo Translation Services
  Author: Christian Federmann <cfedermann@dfki.de>
 """
 from json import dumps
+from subprocess import Popen
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import login as _login, logout as _logout
 from django.shortcuts import render_to_response
@@ -67,18 +68,15 @@ def _translate(_source, _target, _type, _text):
     print shell_cmd
     return
 
-#    process = Popen(shell_cmd, shell=True)
-#    process.wait()
-
-    # Wait for some time to ensure file I/O is completed.
-#    sleep(2)
+    process = Popen(shell_cmd, shell=True)
+    process.wait()
 
     # We can now load the translation from the target file.
     with open(target_file, 'r') as target:
         target_text = target.read()
 
-#    unlink(source_file[1])
-#    unlink(target_file)
+    unlink(source_file[1])
+    unlink(target_file)
 
     return unicode(target_text, 'utf-8')
     
@@ -110,12 +108,7 @@ def translate(request):
             _type = form.cleaned_data['system_type']
             _text = form.cleaned_data['source_text']
             
-            _translate(_source, _target, _type, _text)
-            
-            print _text.encode('utf-8')
-            
-            selected = '{},{},{}'.format(_source, _target, _type)
-            result = "TRANSLATION_{}_WOULD_BE_AVAILABLE_HERE".format(selected)
+            result = _translate(_source, _target, _type, _text)
 
     else:
         form = TranslateForm()
