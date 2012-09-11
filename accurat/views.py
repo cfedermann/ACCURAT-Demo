@@ -65,11 +65,6 @@ def translate(request):
     
     print "selected: {}".format(selected)
     
-    from accurat.forms import _compute_source_choices, _compute_target_choices, _compute_type_choices
-    print _compute_source_choices()
-    print _compute_target_choices()
-    print _compute_type_choices()
-
     dictionary = {
       'title': 'ACCURAT Translation Services',
       'commit_tag': COMMIT_TAG,

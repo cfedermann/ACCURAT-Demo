@@ -51,6 +51,11 @@ $(document).ready(function() {
     update_system_type();
   });
 
+  var system_type = $('#id_system_type');
+  system_type.change(function() {
+    set_focus();
+  })
+
   update_source_languages(SELECTED[0]);
 });
 
