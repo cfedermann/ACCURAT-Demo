@@ -15,7 +15,7 @@ LANGUAGE_PAIRS = (
 
 def _compute_choices(index):
     """Returns available source language choices."""
-    choices = list(set([x.split(',')[1] for x in LANGUAGE_PAIRS]))
+    choices = list(set([x.split(',')[index] for x in LANGUAGE_PAIRS]))
     choices.sort()
     return tuple((x, x) for x in choices)
 
