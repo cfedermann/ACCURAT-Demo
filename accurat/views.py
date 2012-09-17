@@ -85,6 +85,9 @@ def _translate(_source, _target, _type, _text):
             target_text = target.read()
     
         target_text = target_text.decode('utf-8')
+        
+        unlink(source_file[1])
+        unlink(target_file)
     
     else:
         target_text = u''
@@ -109,9 +112,6 @@ def _translate(_source, _target, _type, _text):
         _pos += 1
     
     print TRANSLATION_CACHE
-
-    unlink(source_file[1])
-    unlink(target_file)
 
     return u'\n'.join(_result)
     
