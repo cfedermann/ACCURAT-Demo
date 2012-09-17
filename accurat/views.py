@@ -52,36 +52,42 @@ def _translate(_source, _target, _type, _text):
         
         _sentences_to_translate.append(_stripped)
     
-    source_file = mkstemp(suffix=".source", dir="/tmp")
-    write(source_file[0], u'\n'.join(_sentences_to_translate))
-    write(source_file[0], u'\n')
-    close(source_file[0])
+    if len(_sentences_to_translate):
+        source_file = mkstemp(suffix=".source", dir="/tmp")
+        write(source_file[0], u'\n'.join(_sentences_to_translate))
+        write(source_file[0], u'\n')
+        close(source_file[0])
     
-    target_file = source_file[1].strip('.source') + '.target'
+        target_file = source_file[1].strip('.source') + '.target'
     
-    # This is a special instance of the Moses worker, with pre-defined
-    # knowledge about the ACCURAT Moses configurations.  We use this
-    # approach to ensure that only one Moses process at a time can be
-    # started; by doing so, we can avoid memory issues.
-    MOSES_CMD = '/share/accurat/run/wmt10/bin/moses-irstlm/mosesdecoder' \
-      '/mosesdecoder/moses-cmd/src/moses'
+        # This is a special instance of the Moses worker, with pre-defined
+        # knowledge about the ACCURAT Moses configurations.  We use this
+        # approach to ensure that only one Moses process at a time can be
+        # started; by doing so, we can avoid memory issues.
+        MOSES_CMD = '/share/accurat/run/wmt10/bin/moses-irstlm/mosesdecoder' \
+          '/mosesdecoder/moses-cmd/src/moses'
     
-    MOSES_CONFIG = '/share/accurat/mtserver/accurat/{0}-{1}/' \
-      '{2}.moses.ini.bin'.format(source_language, target_language,
-      system_type)
+        MOSES_CONFIG = '/share/accurat/mtserver/accurat/{0}-{1}/' \
+          '{2}.moses.ini.bin'.format(source_language, target_language,
+          system_type)
     
-    # Then, we invoke the Moses command reading from the source file
-    # and writing to a target file, also inside /tmp.  This blocks until
-    # the Moses process finishes.
-    shell_cmd = "{0} -f {1} < {2} > {3}".format(
-      MOSES_CMD, MOSES_CONFIG, source_file[1], target_file)
+        # Then, we invoke the Moses command reading from the source file
+        # and writing to a target file, also inside /tmp.  This blocks until
+        # the Moses process finishes.
+        shell_cmd = "{0} -f {1} < {2} > {3}".format(
+          MOSES_CMD, MOSES_CONFIG, source_file[1], target_file)
 
-    process = Popen(shell_cmd, shell=True)
-    process.wait()
+        process = Popen(shell_cmd, shell=True)
+        process.wait()
 
-    # We can now load the translation from the target file.
-    with open(target_file, 'r') as target:
-        target_text = target.read()
+        # We can now load the translation from the target file.
+        with open(target_file, 'r') as target:
+            target_text = target.read()
+    
+        target_text = target_text.decode('utf-8')
+    
+    else:
+        target_text = u''
     
     _result = []
     _translated_sentences = target_text.split(u'\n')
@@ -90,7 +96,7 @@ def _translate(_source, _target, _type, _text):
         _stripped = _line.strip()
         if _cache.has_key(_stripped):
             if _cache[_stripped].has_key(target_language):
-                _result.append(TRANSLATION_CACHE[_stripped][target_language])
+                _result.append(_cache[_stripped][target_language])
                 continue
         
         else:
@@ -107,7 +113,7 @@ def _translate(_source, _target, _type, _text):
     unlink(source_file[1])
     unlink(target_file)
 
-    return unicode(u'\n'.join(_result), 'utf-8')
+    return u'\n'.join(_result)
     
 
 def home(request):
