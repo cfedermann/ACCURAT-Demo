@@ -90,6 +90,8 @@ def _translate(_source, _target, _type, _text):
         unlink(target_file)
     
     else:
+        from time import sleep
+        sleep(2)
         target_text = u''
     
     _result = []
