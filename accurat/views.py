@@ -12,7 +12,7 @@ from django.template import RequestContext
 from accurat.forms import TranslateForm, LANGUAGE_PAIRS, LANGUAGE_CODES
 from accurat.settings import COMMIT_TAG
 
-TRANSLATION_CACHE = {}
+TRANSLATION_CACHE = {'baseline': {}, 'improved': {}, 'narrow': {}}
 
 def _compile_json_data(language_pairs):
     """
@@ -43,10 +43,11 @@ def _translate(_source, _target, _type, _text):
     system_type = _type.lower()
     
     _sentences_to_translate = []
-    for _line in _text.split('\n'):
+    _cache = TRANSLATION_CACHE[system_type]
+    for _line in _text.split(u'\n'):
         _stripped = _line.strip()
-        if TRANSLATION_CACHE.has_key(_stripped):
-            if TRANSLATION_CACHE[_stripped].has_key(target_language):
+        if _cache.has_key(_stripped):
+            if _cache[_stripped].has_key(target_language):
                 continue
         
         _sentences_to_translate.append(_stripped)
@@ -83,21 +84,21 @@ def _translate(_source, _target, _type, _text):
         target_text = target.read()
     
     _result = []
-    _translated_sentences = target_text.split('\n')
+    _translated_sentences = target_text.split(u'\n')
     _pos = 0
-    for _line in _text.split('\n'):
+    for _line in _text.split(u'\n'):
         _stripped = _line.strip()
-        if TRANSLATION_CACHE.has_key(_stripped):
-            if TRANSLATION_CACHE[_stripped].has_key(target_language):
+        if _cache.has_key(_stripped):
+            if _cache[_stripped].has_key(target_language):
                 _result.append(TRANSLATION_CACHE[_stripped][target_language])
                 continue
         
         else:
-            TRANSLATION_CACHE[_stripped] = {}
+            _cache[_stripped] = {}
         
         _translated_sentence = _translated_sentences[_pos]
         _result.append(_translated_sentence)
-        TRANSLATION_CACHE[_stripped][target_language] = _translated_sentence
+        _cache[_stripped][target_language] = _translated_sentence
         
         _pos += 1
     
