@@ -50,12 +50,13 @@ def _translate(_source, _target, _type, _text):
             if _cache[_stripped].has_key(target_language):
                 continue
         
-        _sentences_to_translate.append(_stripped)
+        _sentences_to_translate.append(unicode(_stripped))
     
     if len(_sentences_to_translate):
         source_file = mkstemp(suffix=".source", dir="/tmp")
-        write(source_file[0], u'\n'.join(_sentences_to_translate))
-        write(source_file[0], u'\n')
+        _source_text = u'\n'.join(_sentences_to_translate)
+        _source_text += u'\n'
+        write(source_file[0], _source_text.encode('utf-8'))
         close(source_file[0])
     
         target_file = source_file[1].strip('.source') + '.target'
