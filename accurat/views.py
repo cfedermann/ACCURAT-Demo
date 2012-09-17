@@ -12,6 +12,8 @@ from django.template import RequestContext
 from accurat.forms import TranslateForm, LANGUAGE_PAIRS, LANGUAGE_CODES
 from accurat.settings import COMMIT_TAG
 
+TRANSLATION_CACHE = {}
+
 def _compile_json_data(language_pairs):
     """
     Converts a tuple of language pair data into a 2-dimensional JSON map.
@@ -36,18 +38,26 @@ def _translate(_source, _target, _type, _text):
     from tempfile import mkstemp
     from os import unlink, close, write
     
-    source_file = mkstemp(suffix=".source", dir="/tmp")
-    if not _text.endswith('\n'):
-        _text += '\n'
-    write(source_file[0], _text)
-    close(source_file[0])
-    
-    target_file = source_file[1].strip('.source') + '.target'
-
     source_language = LANGUAGE_CODES[_source]
     target_language = LANGUAGE_CODES[_target]
     system_type = _type.lower()
-
+    
+    _sentences_to_translate = []
+    for _line in _text.split('\n'):
+        _stripped = _line.strip()
+        if TRANSLATION_CACHE.has_key(_stripped):
+            if TRANSLATION_CACHE[_stripped].has_key(target_language):
+                continue
+        
+        _sentences_to_translate.append(_stripped)
+    
+    source_file = mkstemp(suffix=".source", dir="/tmp")
+    write(source_file[0], u'\n'.join(_sentences_to_translate))
+    write(source_file[0], u'\n')
+    close(source_file[0])
+    
+    target_file = source_file[1].strip('.source') + '.target'
+    
     # This is a special instance of the Moses worker, with pre-defined
     # knowledge about the ACCURAT Moses configurations.  We use this
     # approach to ensure that only one Moses process at a time can be
@@ -72,12 +82,31 @@ def _translate(_source, _target, _type, _text):
     with open(target_file, 'r') as target:
         target_text = target.read()
     
-    print target_text
+    _result = []
+    _translated_sentences = target_text.split('\n')
+    _pos = 0
+    for _line in _text.split('\n'):
+        _stripped = _line.strip()
+        if TRANSLATION_CACHE.has_key(_stripped):
+            if TRANSLATION_CACHE[_stripped].has_key(target_language):
+                _result.append(TRANSLATION_CACHE[_stripped][target_language])
+                continue
+        
+        else:
+            TRANSLATION_CACHE[_stripped] = {}
+        
+        _translated_sentence = _translated_sentences[_pos]
+        _result.append(_translated_sentence)
+        TRANSLATION_CACHE[_stripped][target_language] = _translated_sentence
+        
+        _pos += 1
+    
+    print TRANSLATION_CACHE
 
     unlink(source_file[1])
     unlink(target_file)
 
-    return unicode(target_text, 'utf-8')
+    return unicode(u'\n'.join(_result), 'utf-8')
     
 
 def home(request):
