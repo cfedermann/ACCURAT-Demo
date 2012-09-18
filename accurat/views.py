@@ -6,7 +6,7 @@ from json import dumps
 from subprocess import Popen
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import login as _login, logout as _logout
-from django.shortcuts import render_to_response
+from django.shortcuts import render, render_to_response
 from django.template import RequestContext
 
 from accurat.forms import TranslateForm, LANGUAGE_PAIRS, LANGUAGE_CODES
