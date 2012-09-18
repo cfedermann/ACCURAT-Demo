@@ -170,13 +170,13 @@ def login(request, template_name):
     """
     if request.user.username:
         dictionary = {
+          'title': 'ACCURAT Translation Services',
           'commit_tag': COMMIT_TAG,
           'message': 'You are already logged in as "{0}".'.format(
             request.user.username),
-          'title': 'Appraise evaluation system',
         }
         
-        return render(request, 'frontpage.html', dictionary)
+        return render(request, 'home.html', dictionary)
     
     extra_context = {'commit_tag': COMMIT_TAG}
     return _login(request, template_name, extra_context=extra_context)
