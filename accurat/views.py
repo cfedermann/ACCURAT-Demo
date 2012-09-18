@@ -172,8 +172,8 @@ def login(request, template_name):
         dictionary = {
           'title': 'ACCURAT Translation Services',
           'commit_tag': COMMIT_TAG,
-          'message': 'You are already logged in as "{0}".'.format(
-            request.user.username),
+          'message': 'You are already logged in as ' \
+            ' <code>"{0}"</code>.'.format(request.user.username),
         }
         
         return render(request, 'home.html', dictionary)

@@ -2,8 +2,8 @@
 
 {% block content %}
 {% if message %}
-  <div class="alert-message error">
-    <p><strong>Please note:</strong> {{message}}</p>
+  <div class="alert alert-error">
+    <strong>Please note:</strong> {{message|safe}}
   </div>
 {% endif %}
 
