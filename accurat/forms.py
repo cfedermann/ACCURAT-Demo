@@ -63,6 +63,8 @@ def _compute_choices(index):
     choices.sort()
     return tuple((x, x) for x in choices)
 
+
+# pylint: disable-msg=R0924
 class TranslateForm(forms.Form):
     source_language = forms.ChoiceField(choices=_compute_choices(0))
     target_language = forms.ChoiceField(choices=_compute_choices(1))
