@@ -17,6 +17,7 @@ except ImportError:
       "module.\n" % __file__)
     sys.exit(1)
 
+# pylint: disable-msg=W0403
 import settings
 
 if __name__ == "__main__":
