@@ -34,6 +34,7 @@ def _compile_json_data(language_pairs):
     
     return json_data
 
+# pylint: disable-msg=C0103
 def _translate(_source, _target, _type, _text):
     from tempfile import mkstemp
     from os import unlink, close, write
@@ -78,6 +79,7 @@ def _translate(_source, _target, _type, _text):
         shell_cmd = "{0} -f {1} < {2} > {3}".format(
           MOSES_CMD, MOSES_CONFIG, source_file[1], target_file)
 
+        # pylint: disable-msg=E1101
         process = Popen(shell_cmd, shell=True)
         process.wait()
 
