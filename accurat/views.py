@@ -1,6 +1,6 @@
 """
 Project: ACCURAT Demo Translation Services
- Author: Christian Federmann <cfedermann@dfki.de>
+ Author: Christian Federmann <cfedermann@gmail.com>
 """
 from json import dumps
 from subprocess import Popen

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """
 Project: ACCURAT Demo Translation Services
- Author: Christian Federmann <cfedermann@dfki.de>
+ Author: Christian Federmann <cfedermann@gmail.com>
 """
 from django.core.management import execute_manager
 import imp

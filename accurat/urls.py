@@ -1,6 +1,6 @@
 """
 Project: ACCURAT Demo Translation Services
- Author: Christian Federmann <cfedermann@dfki.de>
+ Author: Christian Federmann <cfedermann@gmail.com>
 """
 from django.conf.urls.defaults import patterns, url #, include
 
